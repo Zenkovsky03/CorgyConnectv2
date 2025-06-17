@@ -241,66 +241,68 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
 
+    # formatter wspólny
     'formatters': {
-        'verbose': {
-            'format': '[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s',
+        'default': {
+            'format': '[{asctime}] [{levelname}] [{name}] {message}',
+            'style': '{',
         },
     },
-    'root': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
 
+    # ------------- handlery dostępne zawsze -------------
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'project.log'),
-            'formatter': 'verbose',
+            'formatter': 'default',
         },
     },
 
+    # ------------- definicje loggerów -------------
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'handlers': ['console'],   # ← file dopiszemy niżej tylko w DEBUG
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': True,
         },
         'doggs': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'users': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
-    }
+    },
+
+    # ------------- root logger -------------
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
 }
+
+# ------------------------------------------------------------------------------
+# Uzupełnienie tylko gdy pracujesz lokalnie
+# ------------------------------------------------------------------------------
+
 if DEBUG:
-    log_dir = os.path.join(BASE_DIR, 'logs')
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    log_dir = BASE_DIR / 'logs'
+    log_dir.mkdir(exist_ok=True)
 
     LOGGING['handlers']['file'] = {
-        'level': 'DEBUG',
         'class': 'logging.FileHandler',
-        'filename': os.path.join(log_dir, 'project.log'),
+        'formatter': 'default',
+        'filename': log_dir / 'project.log',
+        'level': 'DEBUG',
     }
-    LOGGING['root']['handlers'].append('file')
-else:
-    # nadpisz tylko handlers na Heroku
-    LOGGING['handlers'] = {
-        'console': {
-            'class': 'logging.StreamHandler',
-        }
-    }
-    LOGGING['root']['handlers'] = ['console']
 
+    # dopisz “file” do wszystkich, którym go chcesz dodać
+    LOGGING['loggers']['django']['handlers'].append('file')
+    LOGGING['loggers']['doggs']['handlers'].append('file')
+    LOGGING['loggers']['users']['handlers'].append('file')
+    LOGGING['root']['handlers'].append('file')
 
 CKEDITOR_CONFIGS = {
     'default': {
