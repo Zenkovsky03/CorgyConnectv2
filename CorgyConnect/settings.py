@@ -246,6 +246,10 @@ LOGGING = {
             'format': '[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s',
         },
     },
+    'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
 
     'handlers': {
         'console': {
