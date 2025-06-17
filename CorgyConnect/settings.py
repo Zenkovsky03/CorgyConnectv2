@@ -277,6 +277,25 @@ LOGGING = {
         },
     }
 }
+if DEBUG:
+    log_dir = os.path.join(BASE_DIR, 'logs')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    LOGGING['handlers']['file'] = {
+        'level': 'DEBUG',
+        'class': 'logging.FileHandler',
+        'filename': os.path.join(log_dir, 'project.log'),
+    }
+    LOGGING['root']['handlers'].append('file')
+else:
+    # nadpisz tylko handlers na Heroku
+    LOGGING['handlers'] = {
+        'console': {
+            'class': 'logging.StreamHandler',
+        }
+    }
+    LOGGING['root']['handlers'] = ['console']
 
 
 CKEDITOR_CONFIGS = {
