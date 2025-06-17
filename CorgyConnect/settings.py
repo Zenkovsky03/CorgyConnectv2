@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'corgyconnect-a9e73c3ccbf7.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'corgyapp-6ac6f9a942e8.herokuapp.com']
 
 
 # Application definition
@@ -146,17 +146,6 @@ WSGI_APPLICATION = 'CorgyConnect.wsgi.application'
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'corgyconnect',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Mateuszek1!',
-#         'HOST': 'database-1.c1womiquel9o.eu-north-1.rds.amazonaws.com',
-#         'PORT': '5432',
 #     }
 # }
 
