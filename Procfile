@@ -1,0 +1,1 @@
+web: gunicorn CorgyConnect.wsgi --log-file -

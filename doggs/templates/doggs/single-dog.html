@@ -1,0 +1,75 @@
+{% extends 'main.html' %}
+{% block content %}
+
+  <!-- Main Section -->
+  <main class="singleProject my-md">
+    <div class="container">
+      <div class="layout">
+        <div class="column column--1of3">
+          <h3 class="singleProject__subtitle">Advantages</h3>
+          <div class="singleProject__toolStack">
+              {% for tags in dogObj.tags.all %}
+                <span class="tag tag--pill tag--sub tag--lg">
+                  <small>{{ tags.name }}</small>
+                </span>
+              {% endfor %}
+          </div>
+           {% if dogObj.wiki_link  %}
+           	    <a class="singleProject__liveLink" href="{{ dogObj.wiki_link }}" target="_blank"><i class="im im-external-link"></i>Wiki link</a>
+           {% endif %}
+        </div>
+        <div class="column column--2of3">
+          <img class="singleProject__preview" src="{{ dogObj.imageURL }}" alt="portfolio thumbnail" />
+          <a href="{% url 'user-profile' dogObj.owner.id %}" class="singleProject__developer">{{ dogObj.owner.name }}</a>
+          <h2 class="singleProject__title">{{ dogObj.name }}</h2>
+          <h3 class="singleProject__subtitle">About the Dog</h3>
+          <div class="singleProject__info">{{ dogObj.description|safe }}</div>
+
+
+          <div class="comments">
+            <h3 class="singleProject__subtitle">Feedback</h3>
+            <h5 class="project--rating">
+                {{ dogObj.vote_ratio }}% Postitive Feedback ({{ dogObj.vote_total }} Vote{{ dogObj.vote_total|pluralize:"s"}})
+            </h5>
+                {% if request.user.profile.id in dogObj.reviewers %}
+                    <p>You have already submitted your review for this dog</p>
+                {% elif request.user.profile == dogObj.owner  %}
+                    <p>You cannot review your own dog</p>
+                {% elif request.user.is_authenticated %}
+                    <form class="form" action="{% url 'dog' dogObj.id %}" method="POST">
+                      {% csrf_token %}
+                      {% for field in form %}
+                          <div class="form__field">
+                            <label for="formInput#textarea">{{ field.label }}</label>
+                            {{ field }}
+                          </div>
+                      {% endfor %}
+                      <input class="btn btn--sub btn--lg" type="submit" value="Comments" />
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}">Please login to leave a review</a>
+                {% endif %}
+            <div class="commentList">
+              {% for review in dogObj.review_set.all %}
+                  {% if review.body %}
+                      <div class="comment">
+                        <a href="{% url 'user-profile' review.owner.id %}">
+                          <img class="avatar avatar--md" src="{{ review.owner.profile_image.url }}" alt="user" />
+                        </a>
+                        <div class="comment__details">
+                          <a href="{% url 'user-profile' review.owner.id %}" class="comment__author">{{ review.owner.name }}</a>
+                          <p class="comment__info">{{ review.body|linebreaksbr }}</p>
+                        </div>
+                      </div>
+                  {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </main>
+
+{% endblock content %}
+
